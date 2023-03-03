@@ -1,5 +1,6 @@
 package com.example.starwarsplanetapi.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Data
 @Entity(name = "planets")
 @NoArgsConstructor
+@AllArgsConstructor
 public class Planet {
 
     @Id

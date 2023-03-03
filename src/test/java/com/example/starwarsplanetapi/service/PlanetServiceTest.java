@@ -10,9 +10,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
-import static com.example.starwarsplanetapi.common.PlanetConstants.INVALID_PLANET;
-import static com.example.starwarsplanetapi.common.PlanetConstants.PLANET;
+import java.util.Optional;
+
+import static com.example.starwarsplanetapi.common.PlanetConstants.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PlanetServiceTest {
@@ -44,5 +46,26 @@ public class PlanetServiceTest {
         Mockito.when(planetRepository.save(INVALID_PLANET)).thenThrow(RuntimeException.class);
 
         Assertions.assertThatThrownBy(() -> planetServiceImpl.create(INVALID_PLANET)).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    public void findPlanetById_WithInvalidId_ReturnsEmpty() {
+
+        Mockito.when(planetRepository.findById(3L)).thenReturn(Optional.empty());
+
+        Optional<Planet> sut = planetServiceImpl.findById(3L);
+
+        Assertions.assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void findPlanetById_WithValidId_ReturnsPlanet() {
+
+        Mockito.when(planetRepository.findById(2L)).thenReturn(Optional.of(PLANET_FOUND));
+
+        Optional<Planet> sut = planetServiceImpl.findById(2L);
+
+        Assertions.assertThat(sut).isNotEmpty();
+        Assertions.assertThat(sut.get()).isEqualTo(PLANET_FOUND);
     }
 }

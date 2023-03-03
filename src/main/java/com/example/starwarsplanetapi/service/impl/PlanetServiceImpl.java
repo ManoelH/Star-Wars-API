@@ -5,6 +5,8 @@ import com.example.starwarsplanetapi.repository.PlanetRepository;
 import com.example.starwarsplanetapi.service.PlanetService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PlanetServiceImpl implements PlanetService {
 
@@ -19,4 +21,11 @@ public class PlanetServiceImpl implements PlanetService {
     public Planet create(Planet planet) {
         return planetRepository.save(planet);
     }
+
+    @Override
+    public Optional<Planet> findById(Long id) {
+        return planetRepository.findById(id);
+    }
+
+
 }
