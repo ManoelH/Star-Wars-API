@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.starwarsplanetapi.shared.URLS.COMMON_FILTERS.FIND_BY_NAME;
@@ -44,7 +43,16 @@ public class PlanetResource {
 
     @PostMapping(FIND_BY_CLIMATE_OR_TERRAIN)
     public ResponseEntity<List<Planet>> findPlanetByClimateOrTerrain(@RequestBody Planet planet) {
-        return planetServiceImpl.findPlanetByClimateOrTerrain(planet.getName()).map(list -> ResponseEntity.ok(list))
-                .orElseGet(() -> ResponseEntity.ok(new ArrayList<>()));
+        List<Planet> list = planetServiceImpl.findPlanetByClimateOrTerrain(planet);
+        return ResponseEntity.ok(list);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        Boolean deleted = planetServiceImpl.deletePlanetById(id);
+        if (deleted)
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

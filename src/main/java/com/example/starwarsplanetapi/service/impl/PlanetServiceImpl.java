@@ -3,6 +3,8 @@ package com.example.starwarsplanetapi.service.impl;
 import com.example.starwarsplanetapi.domain.Planet;
 import com.example.starwarsplanetapi.repository.PlanetRepository;
 import com.example.starwarsplanetapi.service.PlanetService;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +39,22 @@ public class PlanetServiceImpl implements PlanetService {
     }
 
     @Override
-    public Optional<List<Planet>> findPlanetByClimateOrTerrain(String filter) {
-        return planetRepository.findPlanetByClimateContainsOrTerrainContains(filter);
+    public List<Planet> findPlanetByClimateOrTerrain(Planet planet) {
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("climate", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
+                .withMatcher("terrain", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+
+        return planetRepository.findAll(Example.of(planet, matcher));
+    }
+
+    @Override
+    public Boolean deletePlanetById(Long id) {
+
+        Optional<Planet> planet = findById(id);
+        if (planet.isPresent()) {
+            planetRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

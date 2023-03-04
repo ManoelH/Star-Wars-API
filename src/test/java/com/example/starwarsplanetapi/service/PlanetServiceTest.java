@@ -10,13 +10,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.example.starwarsplanetapi.common.PlanetConstants.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 public class PlanetServiceTest {
@@ -95,22 +99,49 @@ public class PlanetServiceTest {
     @Test
     public void findPlanetByClimateOrTerrain_WithNotExistentFilter_ReturnsEmptyArray() {
 
-        Mockito.when(planetRepository.findPlanetByClimateContainsOrTerrainContains("ZZ"))
-                .thenReturn(Optional.of(new ArrayList<>()));
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("climate", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
+                .withMatcher("terrain", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
 
-        Optional<List<Planet>> sut = planetServiceImpl.findPlanetByClimateOrTerrain("ZZ");
+        Example<Planet> example = Example.of(PLANET, matcher);
 
-        Assertions.assertThat(sut).isEqualTo(Optional.of(new ArrayList<Planet>()));
+        Mockito.when(planetRepository.findAll(example)).thenReturn(Collections.emptyList());
+
+        List<Planet> sut = planetServiceImpl.findPlanetByClimateOrTerrain(PLANET);
+
+        Assertions.assertThat(sut).isEqualTo(Collections.emptyList());
     }
 
     @Test
     public void findPlanetByClimateOrTerrain_WithExistentFilter_ReturnsNotEmptyArray() {
 
-        Mockito.when(planetRepository.findPlanetByClimateContainsOrTerrainContains("a"))
-                .thenReturn(Optional.of(PLANETS_FOUND_LIST));
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("climate", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
+                .withMatcher("terrain", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
 
-        Optional<List<Planet>> sut = planetServiceImpl.findPlanetByClimateOrTerrain("a");
+        Example<Planet> example = Example.of(PLANET_FOUND, matcher);
 
-        Assertions.assertThat(sut).isEqualTo(Optional.of(PLANETS_FOUND_LIST));
+        Mockito.when(planetRepository.findAll(example)).thenReturn(PLANETS_FOUND_LIST);
+
+        List<Planet> sut = planetServiceImpl.findPlanetByClimateOrTerrain(PLANET_FOUND);
+
+        Assertions.assertThat(sut).isEqualTo(PLANETS_FOUND_LIST);
+    }
+
+    @Test
+    public void deletePlanetById_WithNotExistentId_ReturnsFalseToResource() {
+
+//        Mockito.doThrow(new RuntimeException()).when(planetRepository).deleteById(99L);
+//
+//        Assertions.assertThatThrownBy(() -> planetServiceImpl.deletePlanetById(99L)).isInstanceOf(RuntimeException.class);
+
+        Boolean sut = planetServiceImpl.deletePlanetById(any());
+
+        Assertions.assertThat(sut).isEqualTo(false);
+    }
+
+    @Test
+    public void deletePlanetById_WithExistentId_ReturnsTrueToResource() {
+        Assertions.assertThatCode(() -> planetServiceImpl.deletePlanetById(1L)).doesNotThrowAnyException();
     }
 }

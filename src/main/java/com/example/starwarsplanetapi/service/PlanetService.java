@@ -10,5 +10,6 @@ public interface PlanetService {
     Planet create(Planet planet);
     Optional<Planet> findById(Long id);
     Optional<List<Planet>> findPlanetByName(String name);
-    Optional<List<Planet>> findPlanetByClimateOrTerrain(String filter);
+    List<Planet> findPlanetByClimateOrTerrain(Planet planet);
+    Boolean deletePlanetById(Long id);
 }
