@@ -9,6 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.example.starwarsplanetapi.shared.URLS.COMMON_FILTERS.FIND_BY_NAME;
+import static com.example.starwarsplanetapi.shared.URLS.PLANETS.FIND_BY_CLIMATE_OR_TERRAIN;
 import static com.example.starwarsplanetapi.shared.URLS.PLANETS.PLANETS;
 
 @RestController
@@ -29,5 +34,17 @@ public class PlanetResource {
     public ResponseEntity<Planet> findById(@PathVariable Long id) {
         return planetServiceImpl.findById(id).map(planet -> ResponseEntity.ok(planet))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping(FIND_BY_NAME)
+    public ResponseEntity<List<Planet>> findPlanetByName(@RequestBody Planet planet) {
+        return planetServiceImpl.findPlanetByName(planet.getName()).map(list -> ResponseEntity.ok(list))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping(FIND_BY_CLIMATE_OR_TERRAIN)
+    public ResponseEntity<List<Planet>> findPlanetByClimateOrTerrain(@RequestBody Planet planet) {
+        return planetServiceImpl.findPlanetByClimateOrTerrain(planet.getName()).map(list -> ResponseEntity.ok(list))
+                .orElseGet(() -> ResponseEntity.ok(new ArrayList<>()));
     }
 }

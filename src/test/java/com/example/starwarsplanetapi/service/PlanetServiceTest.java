@@ -12,6 +12,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.starwarsplanetapi.common.PlanetConstants.*;
@@ -67,5 +69,48 @@ public class PlanetServiceTest {
 
         Assertions.assertThat(sut).isNotEmpty();
         Assertions.assertThat(sut.get()).isEqualTo(PLANET_FOUND);
+    }
+
+    @Test
+    public void findPlanetByName_WithNotExistentName_ReturnsEmpty() {
+
+        Mockito.when(planetRepository.findPlanetByNameContains("ZZ")).thenReturn(Optional.empty());
+
+        Optional<List<Planet>> sut = planetServiceImpl.findPlanetByName("ZZ");
+
+        Assertions.assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void findPlanetByName_WithExistentName_ReturnsListOfPlanet() {
+
+        Mockito.when(planetRepository.findPlanetByNameContains("AR")).thenReturn(Optional.of(PLANETS_FOUND_LIST));
+
+        Optional<List<Planet>> sut = planetServiceImpl.findPlanetByName("AR");
+
+        Assertions.assertThat(sut).isNotEmpty();
+        Assertions.assertThat(sut.get()).isEqualTo(PLANETS_FOUND_LIST);
+    }
+
+    @Test
+    public void findPlanetByClimateOrTerrain_WithNotExistentFilter_ReturnsEmptyArray() {
+
+        Mockito.when(planetRepository.findPlanetByClimateContainsOrTerrainContains("ZZ"))
+                .thenReturn(Optional.of(new ArrayList<>()));
+
+        Optional<List<Planet>> sut = planetServiceImpl.findPlanetByClimateOrTerrain("ZZ");
+
+        Assertions.assertThat(sut).isEqualTo(Optional.of(new ArrayList<Planet>()));
+    }
+
+    @Test
+    public void findPlanetByClimateOrTerrain_WithExistentFilter_ReturnsNotEmptyArray() {
+
+        Mockito.when(planetRepository.findPlanetByClimateContainsOrTerrainContains("a"))
+                .thenReturn(Optional.of(PLANETS_FOUND_LIST));
+
+        Optional<List<Planet>> sut = planetServiceImpl.findPlanetByClimateOrTerrain("a");
+
+        Assertions.assertThat(sut).isEqualTo(Optional.of(PLANETS_FOUND_LIST));
     }
 }
