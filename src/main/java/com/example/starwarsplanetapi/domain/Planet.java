@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+
 
 @Data
 @Entity(name = "planets")
@@ -18,8 +19,16 @@ public class Planet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    @NotEmpty
     private String name;
+
+    @Column(nullable = false)
+    @NotEmpty
     private String climate;
+
+    @Column(nullable = false)
+    @NotEmpty
     private String terrain;
 
     public Planet(String name, String climate, String terrain) {

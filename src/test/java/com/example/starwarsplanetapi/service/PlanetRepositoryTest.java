@@ -36,4 +36,13 @@ public class PlanetRepositoryTest {
         Assertions.assertThat(sut.getId()).isNotNull();
         Assertions.assertThat(sut).isEqualTo(planet);
     }
+
+    @Test
+    public void createPlanet_WithInvalidData_ThrowsException() {
+        Planet emptyPlanet = new Planet();
+        Planet invalidPlanet = new Planet("", "", "");
+
+        Assertions.assertThatThrownBy(() -> planetRepository.save(emptyPlanet)).isInstanceOf(RuntimeException.class);
+        Assertions.assertThatThrownBy(() -> planetRepository.save(invalidPlanet)).isInstanceOf(RuntimeException.class);
+    }
 }
