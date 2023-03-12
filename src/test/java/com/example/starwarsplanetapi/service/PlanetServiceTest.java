@@ -129,19 +129,15 @@ public class PlanetServiceTest {
     }
 
     @Test
-    public void deletePlanetById_WithNotExistentId_ReturnsFalseToResource() {
+    public void deletePlanetById_WithNotExistentId_ReturnsException() {
 
-//        Mockito.doThrow(new RuntimeException()).when(planetRepository).deleteById(99L);
-//
-//        Assertions.assertThatThrownBy(() -> planetServiceImpl.deletePlanetById(99L)).isInstanceOf(RuntimeException.class);
+        Mockito.doThrow(new RuntimeException()).when(planetRepository).deleteById(any());
 
-        Boolean sut = planetServiceImpl.deletePlanetById(any());
-
-        Assertions.assertThat(sut).isEqualTo(false);
+        Assertions.assertThatThrownBy(() -> planetServiceImpl.deletePlanetById(any())).isInstanceOf(RuntimeException.class);
     }
 
     @Test
-    public void deletePlanetById_WithExistentId_ReturnsTrueToResource() {
+    public void deletePlanetById_WithExistentId_DoNotReturnsException() {
         Assertions.assertThatCode(() -> planetServiceImpl.deletePlanetById(1L)).doesNotThrowAnyException();
     }
 }

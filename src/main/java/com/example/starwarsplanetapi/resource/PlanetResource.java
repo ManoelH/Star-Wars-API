@@ -49,10 +49,7 @@ public class PlanetResource {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        Boolean deleted = planetServiceImpl.deletePlanetById(id);
-        if (deleted)
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        planetServiceImpl.deletePlanetById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

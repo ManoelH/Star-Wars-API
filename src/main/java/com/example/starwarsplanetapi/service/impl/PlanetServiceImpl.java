@@ -48,13 +48,7 @@ public class PlanetServiceImpl implements PlanetService {
     }
 
     @Override
-    public Boolean deletePlanetById(Long id) {
-
-        Optional<Planet> planet = findById(id);
-        if (planet.isPresent()) {
-            planetRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deletePlanetById(Long id) {
+        planetRepository.deleteById(id);
     }
 }
