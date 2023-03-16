@@ -1,4 +1,4 @@
-package com.example.starwarsplanetapi.service;
+package com.example.starwarsplanetapi.repository;
 
 import com.example.starwarsplanetapi.domain.Planet;
 import com.example.starwarsplanetapi.repository.PlanetRepository;
@@ -44,5 +44,16 @@ public class PlanetRepositoryTest {
 
         Assertions.assertThatThrownBy(() -> planetRepository.save(emptyPlanet)).isInstanceOf(RuntimeException.class);
         Assertions.assertThatThrownBy(() -> planetRepository.save(invalidPlanet)).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    public void createPlanet_WithExistingName_ThrowsException() {
+
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+        testEntityManager.detach(planet);
+
+        Planet planet2 = new Planet("NAME", "a", "");
+
+        Assertions.assertThatThrownBy(() -> planetRepository.save(planet2)).isInstanceOf(RuntimeException.class);
     }
 }

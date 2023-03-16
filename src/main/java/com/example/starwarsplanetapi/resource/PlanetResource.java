@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.starwarsplanetapi.shared.URLS.COMMON_FILTERS.FIND_BY_NAME;
-import static com.example.starwarsplanetapi.shared.URLS.PLANETS.FIND_BY_CLIMATE_OR_TERRAIN;
-import static com.example.starwarsplanetapi.shared.URLS.PLANETS.PLANETS;
+import static com.example.starwarsplanetapi.shared.URLS.COMMON_FILTERS.URI_FIND_BY_NAME;
+import static com.example.starwarsplanetapi.shared.URLS.PLANETS.URI_FIND_BY_CLIMATE_OR_TERRAIN;
+import static com.example.starwarsplanetapi.shared.URLS.PLANETS.URI_PLANETS;
 
 @RestController
-@RequestMapping(PLANETS)
+@RequestMapping(URI_PLANETS)
 @AllArgsConstructor
 public class PlanetResource {
 
@@ -35,13 +35,13 @@ public class PlanetResource {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping(FIND_BY_NAME)
+    @PostMapping(URI_FIND_BY_NAME)
     public ResponseEntity<List<Planet>> findPlanetByName(@RequestBody Planet planet) {
         return planetServiceImpl.findPlanetByName(planet.getName()).map(list -> ResponseEntity.ok(list))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping(FIND_BY_CLIMATE_OR_TERRAIN)
+    @PostMapping(URI_FIND_BY_CLIMATE_OR_TERRAIN)
     public ResponseEntity<List<Planet>> findPlanetByClimateOrTerrain(@RequestBody Planet planet) {
         List<Planet> list = planetServiceImpl.findPlanetByClimateOrTerrain(planet);
         return ResponseEntity.ok(list);
