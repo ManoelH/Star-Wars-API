@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static com.example.starwarsplanetapi.shared.URLS.COMMON_FILTERS.URI_FIND_BY_NAME;
@@ -24,7 +25,7 @@ public class PlanetResource {
     private PlanetServiceImpl planetServiceImpl;
 
     @PostMapping
-    public ResponseEntity<Planet> create(@RequestBody Planet planet) {
+    public ResponseEntity<Planet> create(@RequestBody @Valid Planet planet) {
         Planet planetCreated = planetServiceImpl.create(planet);
         return ResponseEntity.status(HttpStatus.CREATED).body(planetCreated);
     }
