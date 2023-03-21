@@ -1,8 +1,8 @@
 package com.example.starwarsplanetapi.repository;
 
 import com.example.starwarsplanetapi.domain.Planet;
-import com.example.starwarsplanetapi.repository.PlanetRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -12,6 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.stereotype.Repository;
 
+
+import java.util.Optional;
 
 import static com.example.starwarsplanetapi.common.PlanetConstants.PLANET;
 
@@ -26,6 +28,12 @@ public class PlanetRepositoryTest {
     @Autowired
     private PlanetRepository planetRepository;
 
+    @AfterEach
+    public void afterEachTest(){
+        PLANET.setId(null);
+    }
+
+    //@BeforeEach
 
     @Test
     public void createPlanet_WithValidData_ReturnsPlanet() {
@@ -55,5 +63,24 @@ public class PlanetRepositoryTest {
         Planet planet2 = new Planet("NAME", "a", "");
 
         Assertions.assertThatThrownBy(() -> planetRepository.save(planet2)).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    public void findPlanetById_WithExistingId_ReturnsPlanet() {
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+        testEntityManager.detach(planet);
+
+        Optional<Planet> sut = planetRepository.findById(planet.getId());
+
+        Assertions.assertThat(sut).isNotEmpty();
+        Assertions.assertThat(sut.get()).isEqualTo(planet);
+    }
+
+    @Test
+    public void findPlanetById_WithInvalidId_ReturnsEmpty() {
+
+        Optional<Planet> sut = planetRepository.findById(0L);
+
+        Assertions.assertThat(sut).isEmpty();
     }
 }
