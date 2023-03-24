@@ -96,16 +96,17 @@ public class PlanetResourceTest {
 
         Mockito.when(planetServiceImpl.findPlanetByName("NAME")).thenReturn(Optional.of(List.of(PLANET)));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(URI_FIND_BY_NAME).content(objectMapper.writeValueAsString(PLANET))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI_PLANETS+URI_FIND_BY_NAME).content(objectMapper.writeValueAsString(PLANET))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value(Optional.of(List.of(PLANET))));
+                .andExpect(MockMvcResultMatchers.content().json("[{'id':null,'name':'NAME', 'climate':'CLIMATE', 'terrain': TERRAIN}]"));
+                //.andExpect(MockMvcResultMatchers.jsonPath("$.[*]").value(List.of(PLANET)));
     }
 
     @Test
     public void findPlanetByName_WithNoneexistentName_ReturnsListNotFound() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.post(URI_FIND_BY_NAME).content(objectMapper.writeValueAsString(PLANET))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI_PLANETS+URI_FIND_BY_NAME).content(objectMapper.writeValueAsString(PLANET))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }

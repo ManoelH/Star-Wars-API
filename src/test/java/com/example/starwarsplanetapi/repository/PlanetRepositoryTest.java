@@ -13,6 +13,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.stereotype.Repository;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.starwarsplanetapi.common.PlanetConstants.PLANET;
@@ -82,5 +83,23 @@ public class PlanetRepositoryTest {
         Optional<Planet> sut = planetRepository.findById(0L);
 
         Assertions.assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void findPlanetByName_WithExistingName_ReturnsListOfPlanet() {
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+        testEntityManager.detach(planet);
+
+        Optional<List<Planet>> sut = planetRepository.findPlanetByNameContains(planet.getName());
+
+        Assertions.assertThat(sut).isNotEmpty();
+        Assertions.assertThat(sut).isEqualTo(Optional.of(List.of(PLANET)));
+    }
+
+    @Test
+    public void findPlanetByName_WithInvalidName_ReturnsEmpty() {
+
+        Optional<List<Planet>> sut = planetRepository.findPlanetByNameContains("0");
+        Assertions.assertThat(sut.get().isEmpty()).isTrue();
     }
 }
