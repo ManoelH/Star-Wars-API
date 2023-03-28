@@ -107,9 +107,9 @@ public class PlanetServiceTest {
 
         Mockito.when(planetRepository.findAll(example)).thenReturn(Collections.emptyList());
 
-        List<Planet> sut = planetServiceImpl.findPlanetByClimateOrTerrain(PLANET);
+        Optional<List<Planet>> sut = planetServiceImpl.findPlanetByClimateOrTerrain(PLANET);
 
-        Assertions.assertThat(sut).isEqualTo(Collections.emptyList());
+        Assertions.assertThat(sut.get()).isEqualTo(Collections.emptyList());
     }
 
     @Test
@@ -123,9 +123,10 @@ public class PlanetServiceTest {
 
         Mockito.when(planetRepository.findAll(example)).thenReturn(PLANETS_FOUND_LIST);
 
-        List<Planet> sut = planetServiceImpl.findPlanetByClimateOrTerrain(PLANET_FOUND);
+        Optional<List<Planet>> sut = planetServiceImpl.findPlanetByClimateOrTerrain(PLANET_FOUND);
 
-        Assertions.assertThat(sut).isEqualTo(PLANETS_FOUND_LIST);
+        Assertions.assertThat(sut.isPresent()).isTrue();
+        Assertions.assertThat(sut.get()).isEqualTo(PLANETS_FOUND_LIST);
     }
 
     @Test

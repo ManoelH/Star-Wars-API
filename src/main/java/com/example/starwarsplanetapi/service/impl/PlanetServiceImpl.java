@@ -39,12 +39,12 @@ public class PlanetServiceImpl implements PlanetService {
     }
 
     @Override
-    public List<Planet> findPlanetByClimateOrTerrain(Planet planet) {
+    public Optional<List<Planet>> findPlanetByClimateOrTerrain(Planet planet) {
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withMatcher("climate", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
                 .withMatcher("terrain", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
 
-        return planetRepository.findAll(Example.of(planet, matcher));
+        return Optional.of(planetRepository.findAll(Example.of(planet, matcher)));
     }
 
     @Override

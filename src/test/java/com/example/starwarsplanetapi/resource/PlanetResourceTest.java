@@ -3,6 +3,7 @@ package com.example.starwarsplanetapi.resource;
 import com.example.starwarsplanetapi.domain.Planet;
 import com.example.starwarsplanetapi.service.impl.PlanetServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 import static com.example.starwarsplanetapi.common.PlanetConstants.PLANET;
 import static com.example.starwarsplanetapi.shared.URLS.COMMON_FILTERS.URI_FIND_BY_NAME;
+import static com.example.starwarsplanetapi.shared.URLS.PLANETS.URI_FIND_BY_CLIMATE_OR_TERRAIN;
 import static com.example.starwarsplanetapi.shared.URLS.PLANETS.URI_PLANETS;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -104,10 +106,38 @@ public class PlanetResourceTest {
     }
 
     @Test
-    public void findPlanetByName_WithNoneexistentName_ReturnsListNotFound() throws Exception {
+    public void findPlanetByName_WithNoneExistentName_ReturnsListNotFound() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post(URI_PLANETS+URI_FIND_BY_NAME).content(objectMapper.writeValueAsString(PLANET))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void findPlanetByFilter_WithValidValues_ReturnsListOfPlanets() throws Exception {
+
+        Mockito.when(planetServiceImpl.findPlanetByClimateOrTerrain(new Planet())).thenReturn(Optional.of(List.of(PLANET)));
+
+        Mockito.when(planetServiceImpl.findPlanetByClimateOrTerrain(PLANET)).thenReturn(Optional.of(List.of(PLANET)));
+
+        mockMvc.perform(MockMvcRequestBuilders.post(URI_PLANETS+URI_FIND_BY_CLIMATE_OR_TERRAIN).content(objectMapper.writeValueAsString(new Planet()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
+
+        mockMvc.perform(MockMvcRequestBuilders.post(URI_PLANETS+URI_FIND_BY_CLIMATE_OR_TERRAIN).content(objectMapper.writeValueAsString(PLANET))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json("[{'id':null,'name':'NAME', 'climate':'CLIMATE', 'terrain': TERRAIN}]"));
+        //.andExpect(MockMvcResultMatchers.jsonPath("$[0]").value(List.of(PLANET)));
+    }
+
+    @Test
+    public void findPlanetByFilter_WithInvalidValues_ReturnsNotFound() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post(URI_PLANETS+URI_FIND_BY_CLIMATE_OR_TERRAIN).content(objectMapper.writeValueAsString(PLANET))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        //.andExpect(MockMvcResultMatchers.jsonPath("$.[*]").value(List.of(PLANET)));
     }
 }

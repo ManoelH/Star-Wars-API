@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.starwarsplanetapi.shared.URLS.COMMON_FILTERS.URI_FIND_BY_NAME;
 import static com.example.starwarsplanetapi.shared.URLS.PLANETS.URI_FIND_BY_CLIMATE_OR_TERRAIN;
@@ -44,8 +45,8 @@ public class PlanetResource {
 
     @PostMapping(URI_FIND_BY_CLIMATE_OR_TERRAIN)
     public ResponseEntity<List<Planet>> findPlanetByClimateOrTerrain(@RequestBody Planet planet) {
-        List<Planet> list = planetServiceImpl.findPlanetByClimateOrTerrain(planet);
-        return ResponseEntity.ok(list);
+        return planetServiceImpl.findPlanetByClimateOrTerrain(planet).map(list -> ResponseEntity.ok(list))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

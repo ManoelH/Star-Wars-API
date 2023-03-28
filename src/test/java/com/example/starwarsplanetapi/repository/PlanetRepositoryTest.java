@@ -10,7 +10,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Repository;
+import org.springframework.test.context.jdbc.Sql;
 
 
 import java.util.List;
@@ -101,5 +104,37 @@ public class PlanetRepositoryTest {
 
         Optional<List<Planet>> sut = planetRepository.findPlanetByNameContains("0");
         Assertions.assertThat(sut.get().isEmpty()).isTrue();
+    }
+
+    //@Sql(scripts = "/import_planets.sql")
+    @Test
+    public void findPlanetByFilter_WithExistingValues_ReturnsListOfPlanet() {
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+        testEntityManager.detach(planet);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("climate", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
+                .withMatcher("terrain", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+
+        Example<Planet> example = Example.of(PLANET, matcher);
+
+        List<Planet> sut = planetRepository.findAll(example);
+
+        Assertions.assertThat(sut).isNotEmpty();
+        Assertions.assertThat(sut).containsAnyOf(PLANET);
+    }
+
+    @Test
+    public void findPlanetByFilter_WithInvalidValues_ReturnsEmpty() {
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("climate", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
+                .withMatcher("terrain", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+
+        Example<Planet> example = Example.of(PLANET, matcher);
+
+        List<Planet> sut = planetRepository.findAll(example);
+
+        Assertions.assertThat(sut).isEmpty();
     }
 }
