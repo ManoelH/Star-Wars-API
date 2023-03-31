@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Repository;
@@ -106,22 +107,25 @@ public class PlanetRepositoryTest {
         Assertions.assertThat(sut.get().isEmpty()).isTrue();
     }
 
-    //@Sql(scripts = "/import_planets.sql")
+    @Sql(scripts = "/import_planets.sql")
     @Test
     public void findPlanetByFilter_WithExistingValues_ReturnsListOfPlanet() {
-        Planet planet = testEntityManager.persistFlushFind(PLANET);
-        testEntityManager.detach(planet);
 
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withMatcher("climate", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
                 .withMatcher("terrain", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
 
-        Example<Planet> example = Example.of(PLANET, matcher);
+        Example<Planet> exampleFiltering = Example.of(new Planet("TATOINE", "ARID", "DESERT"), matcher);
 
-        List<Planet> sut = planetRepository.findAll(example);
+        List<Planet> sutFiltering = planetRepository.findAll(exampleFiltering);
 
-        Assertions.assertThat(sut).isNotEmpty();
-        Assertions.assertThat(sut).containsAnyOf(PLANET);
+        Assertions.assertThat(sutFiltering).isNotEmpty();
+        Assertions.assertThat(sutFiltering).hasSize(1);
+
+        Example<Planet> exampleGettingAll = Example.of(new Planet(), matcher);
+        List<Planet> sutGettingAll = planetRepository.findAll(exampleGettingAll);
+        Assertions.assertThat(sutGettingAll).isNotEmpty();
+        Assertions.assertThat(sutGettingAll).hasSize(3);
     }
 
     @Test
@@ -136,5 +140,16 @@ public class PlanetRepositoryTest {
         List<Planet> sut = planetRepository.findAll(example);
 
         Assertions.assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void deletePlanetById_WithExistentId_DeletePlanet() {
+        Assertions.assertThatThrownBy(() -> planetRepository.deleteById(4L)).isInstanceOf(EmptyResultDataAccessException.class);
+    }
+
+    @Sql(scripts = "/import_planets.sql")
+    @Test
+    public void deletePlanetById_WithNoneExistentId_ThrowsException() {
+        Assertions.assertThatNoException().isThrownBy(() -> planetRepository.deleteById(3L));
     }
 }

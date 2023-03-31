@@ -33,6 +33,7 @@ public class PlanetResourceTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+
     @MockBean
     private PlanetServiceImpl planetServiceImpl;
 
@@ -140,4 +141,13 @@ public class PlanetResourceTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         //.andExpect(MockMvcResultMatchers.jsonPath("$.[*]").value(List.of(PLANET)));
     }
+
+//    @Test
+//    public void deletePlanet_WithExistentId_ReturnsStatusNoContent() throws Exception {
+//        Mockito.when(planetServiceImpl.create(PLANET)).thenReturn(PLANET);
+//
+//        mockMvc.perform(MockMvcRequestBuilders.delete(URI_PLANETS+"/"+4L)
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(MockMvcResultMatchers.status().isNoContent());
+//    }
 }
