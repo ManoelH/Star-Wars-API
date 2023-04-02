@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -142,12 +144,24 @@ public class PlanetResourceTest {
         //.andExpect(MockMvcResultMatchers.jsonPath("$.[*]").value(List.of(PLANET)));
     }
 
-//    @Test
-//    public void deletePlanet_WithExistentId_ReturnsStatusNoContent() throws Exception {
-//        Mockito.when(planetServiceImpl.create(PLANET)).thenReturn(PLANET);
-//
-//        mockMvc.perform(MockMvcRequestBuilders.delete(URI_PLANETS+"/"+4L)
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.status().isNoContent());
-//    }
+    @Test
+    public void deletePlanet_WithExistentId_ReturnsStatusNoContent() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI_PLANETS+"/"+3L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void deletePlanet_WithExistentId_ThrowsNot() throws Exception {
+
+        final Long id = 1L;
+
+        Mockito.doThrow(new EmptyResultDataAccessException(1)).when(planetServiceImpl).deletePlanetById(id);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI_PLANETS+"/"+id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
 }

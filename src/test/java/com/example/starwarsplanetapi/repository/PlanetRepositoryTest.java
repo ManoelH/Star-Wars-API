@@ -143,13 +143,16 @@ public class PlanetRepositoryTest {
     }
 
     @Test
-    public void deletePlanetById_WithExistentId_DeletePlanet() {
+    public void deletePlanetById_WithNoneExistentId_ThrowsException() {
         Assertions.assertThatThrownBy(() -> planetRepository.deleteById(4L)).isInstanceOf(EmptyResultDataAccessException.class);
     }
 
     @Sql(scripts = "/import_planets.sql")
     @Test
-    public void deletePlanetById_WithNoneExistentId_ThrowsException() {
+    public void deletePlanetById_WithExistentId_DeletePlanet() {
         Assertions.assertThatNoException().isThrownBy(() -> planetRepository.deleteById(3L));
+
+        Planet planetRemoved = testEntityManager.find(Planet.class, 3L);
+        Assertions.assertThat(planetRemoved).isNull();
     }
 }
