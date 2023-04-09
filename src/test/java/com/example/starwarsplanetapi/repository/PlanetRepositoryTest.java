@@ -107,7 +107,7 @@ public class PlanetRepositoryTest {
         Assertions.assertThat(sut.get().isEmpty()).isTrue();
     }
 
-    @Sql(scripts = "/import_planets.sql")
+    @Sql(scripts = "/scripts/import_planets.sql")
     @Test
     public void findPlanetByFilter_WithExistingValues_ReturnsListOfPlanet() {
 
@@ -147,7 +147,7 @@ public class PlanetRepositoryTest {
         Assertions.assertThatThrownBy(() -> planetRepository.deleteById(4L)).isInstanceOf(EmptyResultDataAccessException.class);
     }
 
-    @Sql(scripts = "/import_planets.sql")
+    @Sql(scripts = "/scripts/import_planets.sql")
     @Test
     public void deletePlanetById_WithExistentId_DeletePlanet() {
         Assertions.assertThatNoException().isThrownBy(() -> planetRepository.deleteById(3L));

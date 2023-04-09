@@ -9,6 +9,7 @@ public class PlanetConstants {
 
     public static Planet INVALID_PLANET = new Planet("", "", "");
 
+    public static Planet PLANET_FOUND_TATOINE = new Planet(1L, "TATOINE", "ARID", "DESERT");
     public static Planet PLANET_FOUND = new Planet(2L, "NAME", "CLIMATE", "TERRAIN");
 
     public static List<Planet> PLANETS_FOUND_LIST = List.of(new Planet("MART", "STABLE", "ARID"));
