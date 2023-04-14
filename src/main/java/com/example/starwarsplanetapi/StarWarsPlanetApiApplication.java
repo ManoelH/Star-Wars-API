@@ -9,5 +9,4 @@ public class StarWarsPlanetApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(StarWarsPlanetApiApplication.class, args);
 	}
-
 }

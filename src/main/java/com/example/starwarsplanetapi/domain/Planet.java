@@ -1,5 +1,6 @@
 package com.example.starwarsplanetapi.domain;
 
+import com.example.starwarsplanetapi.jacoco.ExcludeFromJacocoGeneratedReport;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,5 +41,16 @@ public class Planet {
     @Override
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(o, this);
+    }
+
+    @Override
+    @ExcludeFromJacocoGeneratedReport
+    public String toString() {
+        return "Planet{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", climate='" + climate + '\'' +
+                ", terrain='" + terrain + '\'' +
+                '}';
     }
 }
